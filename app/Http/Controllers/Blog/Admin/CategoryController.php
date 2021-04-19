@@ -5,8 +5,9 @@ namespace App\Http\Controllers\Blog\Admin;
 //use App\Http\Controllers\Controller;
 use App\Models\BlogCategory;
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-
+//use Illuminate\Http\Request;
+use App\Http\Requests\BlogCategoryUpdateRequest;
+use App\Http\Requests\BlogCategoryCreateRequest;
 class CategoryController extends BaseController
 
 {
@@ -31,6 +32,10 @@ class CategoryController extends BaseController
      */
     public function create()
     {
+        $item = new BlogCategory();
+        $categoryList = BlogCategory::all();
+
+        return view('blog.admin.categories.edit', compact('item', 'categoryList'));
         //dd(__METHOD__);
         //
     }
@@ -41,8 +46,24 @@ class CategoryController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(BlogCategoryCreateRequest $request)
     {
+        $data = $request->input(); //отримаємо масив даних, які надійшли з форми
+        if (empty($data['slug'])) { //якщо псевдонім порожній
+            $data['slug'] = Str::slug($data['title']); //генеруємо псевдонім
+        }
+
+        $item = (new BlogCategory())->create($data); //створюємо об'єкт і додаємо в БД
+
+        if ($item) {
+            return redirect()
+                ->route('blog.admin.categories.edit', [$item->id])
+                ->with(['success' => 'Успішно збережено']);
+        } else {
+            return back()
+                ->withErrors(['msg' => 'Помилка збереження'])
+                ->withInput();
+        }
         //dd(__METHOD__);
         //
     }
@@ -81,8 +102,30 @@ class CategoryController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(BlogCategoryUpdateRequest $request, $id)
     {
+        $rules = [
+            'title' => 'required|min:5|max:200',
+            'slug' => 'max:200',
+            'description' => 'string|max:500|min:3',
+            'parent_id' => 'required|integer|exists:blog_categories,id',
+        ];
+
+        /*1 спосіб
+        $validatedData = $this->validate($request, $rules);  //валідація в контроллері*/
+
+/*2 спосіб
+        $validatedData = $request->validate($rules);   // валідація через об'єкт реквест*/
+
+/*3 спосіб
+        $validator = Validator::make($request->all(), $rules);  //валідація через клас
+        $validatedData[] = $validator->passes(); //перевіряє чи все ок
+        $validatedData[] = $validator->validate(); //редірект якщо помилка
+        $validatedData[] = $validator->valid(); //видає валідні дані
+        $validatedData[] = $validator->failed(); //видає невалідні дані
+        $validatedData[] = $validator->errors(); //текст помилки
+        $validatedData[] = $validator->fails(); //1, якщо помилка
+        */
         $item = BlogCategory::find($id);
         if (empty($item)) { //якщо ід не знайдено
             return back() //redirect back
