@@ -38,3 +38,4 @@ class BlogPostAfterDeleteJob implements ShouldQueue
         logs()->warning("Видалено запис в блозі [{$this->blogPostId}]");
     }
 }
+

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 class BlogCategory extends Model
 {
     /**
@@ -47,7 +47,7 @@ class BlogCategory extends Model
     use SoftDeletes;
     const ROOT = 1;
 
-    //use HasFactory;
+    use HasFactory;
     protected $fillable
         = [
             'title',
