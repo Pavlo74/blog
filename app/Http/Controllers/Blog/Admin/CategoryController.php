@@ -129,21 +129,21 @@ class CategoryController extends BaseController
             'parent_id' => 'required|integer|exists:blog_categories,id',
         ];
 
-        /*1 спосіб
-        $validatedData = $this->validate($request, $rules);  //валідація в контроллері*/
+        //1 спосіб
+        $validatedData = $this->validate($request, $rules);  //валідація в контроллері
 
-/*2 спосіб
-        $validatedData = $request->validate($rules);   // валідація через об'єкт реквест*/
+        //2 спосіб
+        //$validatedData = $request->validate($rules);   // валідація через об'єкт реквест
 
-/*3 спосіб
-        $validator = Validator::make($request->all(), $rules);  //валідація через клас
+//3 спосіб
+       /* $validator = Validator::make($request->all(), $rules);  //валідація через клас
         $validatedData[] = $validator->passes(); //перевіряє чи все ок
         $validatedData[] = $validator->validate(); //редірект якщо помилка
         $validatedData[] = $validator->valid(); //видає валідні дані
         $validatedData[] = $validator->failed(); //видає невалідні дані
         $validatedData[] = $validator->errors(); //текст помилки
-        $validatedData[] = $validator->fails(); //1, якщо помилка
-        */
+        $validatedData[] = $validator->fails(); //1, якщо помилка*/
+
         $item = $this->blogCategoryRepository->getEdit($id);
         if (empty($item)) { //якщо ід не знайдено
             return back() //redirect back
